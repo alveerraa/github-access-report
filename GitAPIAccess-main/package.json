@@ -1,0 +1,19 @@
+{
+  "name": "github-org-access-report-api",
+  "version": "1.0.0",
+  "description": "GitHub Organization Access Report API",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "keywords": ["github", "api", "organization", "access", "report"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.7",
+    "dotenv": "^16.0.3",
+    "cors": "^2.8.5"
+  }
+}

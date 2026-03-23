@@ -1,0 +1,232 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    background-color: #1a1f2e;
+    color: white;
+    padding: 30px 20px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+/* Card Layout */
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.button-group,
+.search-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Buttons and Inputs */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #0969da;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0860ca;
+}
+
+.btn-secondary {
+    background-color: #6e40aa;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5e3799;
+}
+
+.input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 12px;
+    border: 1px solid #d1d9e0;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #0969da;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
+
+/* Status Bar */
+.status-bar {
+    padding: 12px 20px;
+    background-color: #f1f3f5;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Results */
+.results {
+    min-height: 100px;
+}
+
+pre {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f6f8fa;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Loading and Error States */
+.loading {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+.error {
+    color: #c41e3a;
+    background-color: #fff5f5;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #c41e3a;
+}
+
+/* User Results */
+h2 {
+    margin: 0 0 15px 0;
+    font-size: 20px;
+}
+
+.repo-list {
+    list-style: none;
+    padding: 0;
+}
+
+.repo-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #e1e4e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.repo-list li:last-child {
+    border-bottom: none;
+}
+
+.repo-name {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 500;
+    color: #0969da;
+}
+
+/* Role Badges */
+.role-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.role-admin {
+    background-color: #dafbe1;
+    color: #1a7f0f;
+}
+
+.role-write {
+    background-color: #ddf4ff;
+    color: #0969da;
+}
+
+.role-read {
+    background-color: #eaeef2;
+    color: #424a4f;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .header {
+        padding: 20px 15px;
+    }
+
+    .header h1 {
+        font-size: 22px;
+    }
+
+    .button-group,
+    .search-group {
+        flex-direction: column;
+    }
+
+    .btn,
+    .input {
+        width: 100%;
+    }
+
+    .repo-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    pre {
+        font-size: 12px;
+    }
+}

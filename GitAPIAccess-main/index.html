@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Organization Access Report</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>GitHub Access Report</h1>
+        </header>
+
+        <div class="card controls">
+            <div class="button-group">
+                <button id="loadReportBtn" class="btn btn-primary">Load Full Report</button>
+                <button id="clearCacheBtn" class="btn btn-secondary">Clear Cache & Reload</button>
+            </div>
+
+            <div class="search-group">
+                <input type="text" id="usernameInput" placeholder="Enter GitHub username" class="input">
+                <button id="searchUserBtn" class="btn btn-secondary">Search User</button>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span id="statusText">No data loaded</span>
+        </div>
+
+        <div id="resultsDiv" class="card results">
+            <!-- Output will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        const resultsDiv = document.getElementById('resultsDiv');
+        const loadReportBtn = document.getElementById('loadReportBtn');
+        const clearCacheBtn = document.getElementById('clearCacheBtn');
+        const searchUserBtn = document.getElementById('searchUserBtn');
+        const usernameInput = document.getElementById('usernameInput');
+        const statusText = document.getElementById('statusText');
+
+        /**
+         * Display loading state
+         */
+        function showLoading() {
+            resultsDiv.innerHTML = '<p class="loading">Loading...</p>';
+        }
+
+        /**
+         * Display error message
+         */
+        function showError(message) {
+            resultsDiv.innerHTML = `<p class="error">Error: ${message}</p>`;
+        }
+
+        /**
+         * Update status bar
+         */
+        function updateStatus(cacheStatus) {
+            const now = new Date().toLocaleTimeString();
+            statusText.textContent = `Last fetched: ${now} (Cache: ${cacheStatus})`;
+        }
+
+        /**
+         * Load and display full report
+         */
+        loadReportBtn.addEventListener('click', async () => {
+            showLoading();
+            try {
+                const response = await fetch('/api/report');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                const cacheStatus = response.headers.get('X-Cache') || 'UNKNOWN';
+                resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                updateStatus(cacheStatus);
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        /**
+         * Clear cache and reload report
+         */
+        clearCacheBtn.addEventListener('click', async () => {
+            showLoading();
+            try {
+                // Clear cache on server
+                const clearResponse = await fetch('/api/cache/clear', { method: 'POST' });
+                if (!clearResponse.ok) {
+                    throw new Error(`HTTP ${clearResponse.status}`);
+                }
+
+                // Immediately fetch fresh report
+                const reportResponse = await fetch('/api/report');
+                if (!reportResponse.ok) {
+                    throw new Error(`HTTP ${reportResponse.status}`);
+                }
+                const data = await reportResponse.json();
+                const cacheStatus = reportResponse.headers.get('X-Cache') || 'UNKNOWN';
+                resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                updateStatus(cacheStatus);
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        /**
+         * Search for a specific user
+         */
+        searchUserBtn.addEventListener('click', async () => {
+            const username = usernameInput.value.trim();
+            if (!username) {
+                showError('Please enter a username');
+                return;
+            }
+
+            showLoading();
+            try {
+                const response = await fetch(`/api/report/user/${username}`);
+                if (response.status === 404) {
+                    showError('User not found');
+                    return;
+                }
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const user = await response.json();
+
+                // Build HTML list of repos
+                let html = `<h2>User: <strong>${user.login}</strong></h2>`;
+                html += `<p><strong>Repository Access:</strong></p>`;
+
+                if (user.repos.length === 0) {
+                    html += '<p><em>No repository access found</em></p>';
+                } else {
+                    html += '<ul class="repo-list">';
+                    user.repos.forEach(repo => {
+                        const roleBadge = getRoleBadge(repo.role);
+                        html += `<li><span class="repo-name">${repo.repoName}</span> ${roleBadge}</li>`;
+                    });
+                    html += '</ul>';
+                }
+
+                resultsDiv.innerHTML = html;
+                updateStatus('N/A');
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        /**
+         * Get HTML badge for role
+         */
+        function getRoleBadge(role) {
+            let className = 'role-badge role-read';
+            if (role === 'admin') {
+                className = 'role-badge role-admin';
+            } else if (role === 'write') {
+                className = 'role-badge role-write';
+            }
+            return `<span class="${className}">${role}</span>`;
+        }
+
+        // Allow Enter key to search user
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchUserBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
